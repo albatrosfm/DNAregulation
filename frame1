@@ -1,0 +1,35 @@
+import numpy as np
+from keras.layers import Dense, Dropout, Conv1D, MaxPooling1D, Conv2D
+from keras.models import Sequential
+from keras.utils import plot_model
+
+# 200 vectors of length 100
+bg = np.random.randint(0, 4, size=(200, 100))
+bg_labels = np.zeros([200,1])
+sig = np.random.randint(0, 4, size=(200, 100))
+sig_labels = np.ones([200,1])
+
+# embed 2 '444444' into each signal vector
+for row in sig:
+    row_len = row.shape[0]
+    for i in range(2):
+        x = np.random.randint(row_len - 6)
+        row[x:x+6] = np.array([4,4,4,4,4,4])
+data = np.append(sig,bg,axis=0)
+labels = np.append(sig_labels,bg_labels,axis=0)
+
+#shuffle the signal and control
+data_labels = np.append(data, labels, 1)
+np.random.shuffle(data_labels)
+data = data_labels[:,:-1]
+labels = data_labels[:,-1:]
+
+model = Sequential()
+model.add(Dense(units=100, activation='elu', input_dim=100))
+model.add(Dense(units=20, activation='softmax'))
+model.compile(loss='sparse_categorical_crossentropy',
+              optimizer='sgd',
+              metrics=['accuracy'])
+model.fit(data, labels, epochs=500, batch_size=32,  validation_split=0.2)
+
+plot_model(model, to_file='model.png', show_shapes='true')
