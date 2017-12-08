@@ -2,6 +2,7 @@ import numpy as np
 from keras.layers import Dense, Dropout, Conv1D, MaxPooling1D, Conv2D
 from keras.models import Sequential
 from keras.utils import plot_model
+import pandas as pd
 
 # 200 vectors of length 100
 bg = np.random.randint(0, 4, size=(200, 100))
